@@ -1,44 +1,52 @@
 package com.terceiraAPI.Projeto3aAPI.Service;
 
 import com.terceiraAPI.Projeto3aAPI.Model.Produto;
+import com.terceiraAPI.Projeto3aAPI.Repository.ProdutoRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.util.ArrayList;
+
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicLong;
 
 @Service
 public class ProdutoService {
-    private static final List<Produto> produtos = new ArrayList<>();
-    private static final AtomicLong counter = new AtomicLong();
 
+    @Autowired
+    private ProdutoRepository produtoRepository;
+
+    // READ - Listar todos os produtos
     public List<Produto> findAll() {
-        return produtos;
+        return produtoRepository.findAll();
     }
 
+    // READ - Buscar um produto por ID
     public Optional<Produto> findById(Long id) {
-        return produtos.stream().filter(p -> p.getId().equals(id)).findFirst();
+        return produtoRepository.findById(id);
     }
 
+    // CREATE - Criar um novo produto
     public Produto save(Produto produto) {
-        produto.setId(counter.incrementAndGet());
-        produtos.add(produto);
-        return produto;
+        return produtoRepository.save(produto);
     }
 
+    // UPDATE - Atualizar um produto por ID
     public Optional<Produto> update(Long id, Produto produtoAtualizado) {
-        Optional<Produto> produtoExistente = findById(id);
+        Optional<Produto> produtoExistente = produtoRepository.findById(id);
         if (produtoExistente.isPresent()) {
             Produto p = produtoExistente.get();
             p.setNome(produtoAtualizado.getNome());
             p.setPreco(produtoAtualizado.getPreco());
-            return Optional.of(p);
+            return Optional.of(produtoRepository.save(p));
         }
         return Optional.empty();
     }
 
+    // DELETE - Deletar um produto por ID
     public boolean deleteById(Long id) {
-        return produtos.removeIf(p -> p.getId().equals(id));
+        if (produtoRepository.existsById(id)) {
+            produtoRepository.deleteById(id);
+            return true;
+        }
+        return false;
     }
-
 }
