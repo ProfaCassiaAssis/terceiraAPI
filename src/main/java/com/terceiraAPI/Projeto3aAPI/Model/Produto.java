@@ -16,7 +16,7 @@ public class Produto {
     @Column(name = "preco", nullable = false)
     private double preco;
 
-    // Construtor vazio (necessário para o JPA)
+    // Construtor vazio (necessário para o JPA), certo.
     public Produto() {
     }
 
